@@ -1,5 +1,9 @@
 package com.bridgelabz.employee;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -23,7 +27,7 @@ public class EmployeePayRollService {
 		EmployeePayRollService employeePayRollService = new EmployeePayRollService(employeePayrollList);
 		Scanner sc = new Scanner(System.in);
 		employeePayRollService.readData(sc);
-		employeePayRollService.writeData(null);
+		employeePayRollService.writeData();
 	}
 
 	public void readData(Scanner sc) {
@@ -53,5 +57,19 @@ public class EmployeePayRollService {
 			return new com.bridgelabz.employee.EmployeePayrollFileIOService().countEntries();
 		return 0;
 		
+	}
+	
+	public static boolean readFile() {
+		Path path = Paths.get("C:/Users/HP LAP/Desktop/BridgeLabz/FileIO/EmployeePayRoll/PayRollDoc.txt");
+		try {
+			String fileContent = Files.readString(path);
+			String []employees = fileContent.split(",");
+			for(String employee:employees)
+				System.out.println(employee);
+			return true;
+		} catch (IOException e) {
+			System.out.println(" directory not found");
+		}
+		return false;
 	}
 }
