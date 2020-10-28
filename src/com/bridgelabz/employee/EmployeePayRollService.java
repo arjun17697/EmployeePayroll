@@ -27,7 +27,7 @@ public class EmployeePayRollService {
 		EmployeePayRollService employeePayRollService = new EmployeePayRollService(employeePayrollList);
 		Scanner sc = new Scanner(System.in);
 		employeePayRollService.readData(sc);
-		employeePayRollService.writeData();
+		//employeePayRollService.writeData();
 	}
 
 	public void readData(Scanner sc) {
@@ -71,5 +71,11 @@ public class EmployeePayRollService {
 			System.out.println(" directory not found");
 		}
 		return false;
+	}
+
+	public List<EmployeePayRollData> readEmployeePayrollData(IOService ioService) {
+		if(ioService.equals(IOService.DB_IO))
+			this.employeePayrollList=new EmployeePayrollDBService().readData();
+		return this.employeePayrollList;
 	}
 }
