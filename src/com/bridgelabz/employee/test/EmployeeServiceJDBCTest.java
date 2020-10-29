@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,6 +20,7 @@ import com.bridgelabz.employee.EmployeePayrollException;
 public class EmployeeServiceJDBCTest {
 	EmployeePayRollService empPayrollService;
 	List<EmployeePayRollData> empPayrollList;
+	Map<String, Double> empPayrollDataByGenderMap;
 
 	@Before
 	public void Initializer() {
@@ -38,7 +40,7 @@ public class EmployeeServiceJDBCTest {
 	public void givenNewSalary_WhenUpdated_ShouldSyncWithDB() throws SQLException {
 		EmployeePayRollService empPayRollService = new EmployeePayRollService();
 		List<EmployeePayRollData> empPayrollList = empPayRollService.readEmployeePayrollData(IOService.DB_IO);
-		empPayRollService.updateEmployeeSalary("Arjun", 3000001.0);
+		empPayRollService.updateEmployeeSalary("Arjun", 2500000);
 		boolean isSynced = empPayRollService.isEmpPayrollSyncedWithDB("Arjun");
 		assertTrue(isSynced);
 	}
@@ -51,5 +53,33 @@ public class EmployeeServiceJDBCTest {
 		LocalDate enDate = LocalDate.now();
 		empPayrollList = empPayRollService.getEmpPayrollDataForDataRange(startDate, enDate);
 		assertEquals(4, empPayrollList.size());
+	}
+
+	@Test
+	public void givenEmployeeDB_WhenRetrievedSum_ShouldReturnSumByGender() throws EmployeePayrollException {
+		empPayrollDataByGenderMap = empPayrollService.getSumOfDataGroupedByGender(IOService.DB_IO, "basic_pay");
+		assertEquals(2500000, empPayrollDataByGenderMap.get("M"), 0.0);
+		assertEquals(6000000, empPayrollDataByGenderMap.get("F"), 0.0);
+	}
+
+	@Test
+	public void givenEmployeeDB_WhenRetrievedAvg_ShouldReturnAvgByGender() throws EmployeePayrollException {
+		empPayrollDataByGenderMap = empPayrollService.getAvgOfDataGroupedByGender(IOService.DB_IO, "basic_pay");
+		assertEquals(2500000, empPayrollDataByGenderMap.get("M"), 0.0);
+		assertEquals(3000000, empPayrollDataByGenderMap.get("F"), 0.0);
+	}
+
+	@Test
+	public void givenEmployeeDB_WhenRetrievedMaxMin_ShouldReturnMaxByGender() throws EmployeePayrollException {
+		empPayrollDataByGenderMap = empPayrollService.getMAXOfDataGroupedByGender(IOService.DB_IO, "basic_pay");
+		assertEquals(2500000, empPayrollDataByGenderMap.get("M"), 0.0);
+		assertEquals(3000000, empPayrollDataByGenderMap.get("F"), 0.0);
+	}
+
+	@Test
+	public void givenEmployeeDB_WhenRetrievedCount_ShouldReturnCountByGender() throws EmployeePayrollException {
+		empPayrollDataByGenderMap = empPayrollService.getCountOfDataGroupedByGender(IOService.DB_IO, "id");
+		assertEquals(2, empPayrollDataByGenderMap.get("M"), 0.0);
+		assertEquals(3, empPayrollDataByGenderMap.get("F"), 0.0);
 	}
 }

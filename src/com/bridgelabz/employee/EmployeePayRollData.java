@@ -9,6 +9,7 @@ public class EmployeePayRollData {
 	public double salary;
 	public LocalDate startDate;
 	public double basic_pay;
+	public char gender;
 
 	public EmployeePayRollData(int id, String name, double salary) {
 		this.id = id;
@@ -66,5 +67,15 @@ public class EmployeePayRollData {
 	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
+	
+	public char getGender() {
+		return gender;
+	}
+
+	public void setGender(char gender) {
+		this.gender = gender;
+	}
+
+
 
 }
