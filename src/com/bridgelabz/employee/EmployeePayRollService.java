@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -85,7 +86,7 @@ public class EmployeePayRollService {
 		return this.employeePayrollList;
 	}
 
-	public void updateEmployeeSalary(String name, double salary) {
+	public void updateEmployeeSalary(String name, double salary) throws SQLException {
 		int result = employeePayrollDBService.updateSalaryUsingSQL(name, salary);
 		EmployeePayRollData employeePayrollData = getEmployeePayrollData(name);
 		if (result != 0 && employeePayrollData != null)

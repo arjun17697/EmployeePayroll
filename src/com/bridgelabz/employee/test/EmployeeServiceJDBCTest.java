@@ -3,6 +3,7 @@ package com.bridgelabz.employee.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.Assert;
@@ -25,7 +26,7 @@ public class EmployeeServiceJDBCTest {
 	}
 	
 	@Test
-	public void givenNewSalary_WhenUpdated_ShouldSyncWithDB() {
+	public void givenNewSalary_WhenUpdated_ShouldSyncWithDB() throws SQLException {
 		EmployeePayRollService empPayRollService = new EmployeePayRollService();
 		List<EmployeePayRollData> empPayrollList = empPayRollService.readEmployeePayrollData(IOService.DB_IO);
 		empPayRollService.updateEmployeeSalary("Arjun", 3000001.0);
