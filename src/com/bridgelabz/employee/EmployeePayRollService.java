@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -91,6 +92,11 @@ public class EmployeePayRollService {
 		EmployeePayRollData employeePayrollData = getEmployeePayrollData(name);
 		if (result != 0 && employeePayrollData != null)
 			employeePayrollData.basic_pay = salary;
+	}
+
+	public List<EmployeePayRollData> getEmpPayrollDataForDataRange(LocalDate startDate, LocalDate endDate)
+			throws EmployeePayrollException {
+		return employeePayrollDBService.getEmployeesForDateRange(startDate, endDate);
 	}
 
 	public boolean isEmpPayrollSyncedWithDB(String name) {

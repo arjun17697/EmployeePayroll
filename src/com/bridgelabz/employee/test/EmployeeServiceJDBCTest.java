@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.Assert;
@@ -13,18 +14,26 @@ import org.junit.Test;
 import com.bridgelabz.employee.EmployeePayRollData;
 import com.bridgelabz.employee.EmployeePayRollService;
 import com.bridgelabz.employee.EmployeePayRollService.IOService;
+import com.bridgelabz.employee.EmployeePayrollException;
 
 public class EmployeeServiceJDBCTest {
+	EmployeePayRollService empPayrollService;
+	List<EmployeePayRollData> empPayrollList;
 
-	
+	@Before
+	public void Initializer() {
+		empPayrollService = new EmployeePayRollService();
+		empPayrollList = empPayrollService.readEmployeePayrollData(IOService.DB_IO);
+
+	}
+
 	@Test
 	public void givenEmpPayrollDB_WhenRetrieved_ShouldMatchEmpCount() {
-		EmployeePayRollService empPayRollService = new EmployeePayRollService();
-		List<EmployeePayRollData> empPayrollList = empPayRollService.readEmployeePayrollData(IOService.DB_IO);
+
 		assertEquals(5, empPayrollList.size());
 		System.out.println(empPayrollList);
 	}
-	
+
 	@Test
 	public void givenNewSalary_WhenUpdated_ShouldSyncWithDB() throws SQLException {
 		EmployeePayRollService empPayRollService = new EmployeePayRollService();
@@ -32,5 +41,15 @@ public class EmployeeServiceJDBCTest {
 		empPayRollService.updateEmployeeSalary("Arjun", 3000001.0);
 		boolean isSynced = empPayRollService.isEmpPayrollSyncedWithDB("Arjun");
 		assertTrue(isSynced);
+	}
+
+	@Test
+	public void givenDateRange_WhenRetrievedEmployee_ShouldReturnEmpCount() throws EmployeePayrollException {
+		EmployeePayRollService empPayRollService = new EmployeePayRollService();
+		List<EmployeePayRollData> empPayrollList = empPayRollService.readEmployeePayrollData(IOService.DB_IO);
+		LocalDate startDate = LocalDate.of(2018, 01, 01);
+		LocalDate enDate = LocalDate.now();
+		empPayrollList = empPayRollService.getEmpPayrollDataForDataRange(startDate, enDate);
+		assertEquals(4, empPayrollList.size());
 	}
 }
