@@ -57,24 +57,25 @@ public class EmployeePayrollDBService {
 		return employeePayrollList;
 	}
 
-	public List<EmployeePayRollData> getEmployeesForDateRange(LocalDate startDate,LocalDate endDate)
-		throws EmployeePayrollException{
-		String  sql=String.format("SELECT * FROM employee_payroll where start_date between '%s' AND '%s';",
-				Date.valueOf(startDate),Date.valueOf(endDate));
+	public List<EmployeePayRollData> getEmployeesForDateRange(LocalDate startDate, LocalDate endDate)
+			throws EmployeePayrollException {
+		String sql = String.format("SELECT * FROM employee_payroll where start_date between '%s' AND '%s';",
+				Date.valueOf(startDate), Date.valueOf(endDate));
 		return getEmployeePayrollList(sql);
 	}
+
 	private List<EmployeePayRollData> getEmployeePayrollList(String sql) {
-			List<EmployeePayRollData> employeePayrollList= new ArrayList<>();
-			try(Connection connection =getConnection()){
-				PreparedStatement preparedStatement=connection.prepareStatement(sql);
-				ResultSet resultSet=preparedStatement.executeQuery();
-				while(resultSet.next()) {
-					employeePayrollList.add(new EmployeePayRollData(resultSet.getInt("id"),resultSet.getString("name"),
-							resultSet.getDouble("basic_pay"),resultSet.getDate("start_Date")));
-				}
-			}catch(SQLException e) {
-				e.printStackTrace();
+		List<EmployeePayRollData> employeePayrollList = new ArrayList<>();
+		try (Connection connection = getConnection()) {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				employeePayrollList.add(new EmployeePayRollData(resultSet.getInt("id"), resultSet.getString("name"),
+						resultSet.getDouble("basic_pay"), resultSet.getDate("start_Date")));
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return employeePayrollList;
 	}
 
@@ -113,32 +114,46 @@ public class EmployeePayrollDBService {
 		}
 		return employeePayrollList;
 	}
-	
-	public int updateSalaryUsingSQL(String name,Double salary) throws SQLException {
-		String sql="UPDATE employee_payroll SET basic_pay=? WHERE name=?";
-		try(Connection connection=getConnection()){
+
+	public int updateSalaryUsingSQL(String name, Double salary) throws SQLException {
+		String sql = "UPDATE employee_payroll SET basic_pay=? WHERE name=?";
+		try (Connection connection = getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setDouble(1, salary);
 			preparedStatement.setString(2, name);
 			return preparedStatement.executeUpdate();
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return 0;
 	}
-	
-	public Map<String,Double> getEmpDataGroupByGender(String column,String operation){
-		Map<String,Double>dataByGenderMap=new HashMap<>();
-		String sql= String.format("SELECT gender, %s(%s) FROM employee_payroll GROUP BY gender;",operation,column );
-		try (Connection connection=getConnection()){
+
+	public Map<String, Double> getEmpDataGroupByGender(String column, String operation) {
+		Map<String, Double> dataByGenderMap = new HashMap<>();
+		String sql = String.format("SELECT gender, %s(%s) FROM employee_payroll GROUP BY gender;", operation, column);
+		try (Connection connection = getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			ResultSet resultSet=preparedStatement.executeQuery();
+			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
 				dataByGenderMap.put(resultSet.getString(1), resultSet.getDouble(2));
 			}
-		}catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return dataByGenderMap;
+	}
+
+	public int insertNewEmployeeToDB(String name, Double salary, String department, String startDate, String gender)
+			throws EmployeePayrollException {
+		String sql = String.format(
+				"INSERT INTO employee_payroll(name,basic_pay,department,start_date,gender,deductions,"
+						+ "taxable_pay,tax,net_pay) VALUES ('%s','%s','%s','%s','%s',0,0,0,0);",
+				name, salary, department, startDate, gender);
+		try (Connection connection = getConnection()) {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			return preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			throw new EmployeePayrollException("Wrong SQL or field given", ExceptionType.WRONG_SQL);
+		}
 	}
 }

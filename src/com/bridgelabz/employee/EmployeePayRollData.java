@@ -68,6 +68,22 @@ public class EmployeePayRollData {
 		this.startDate = startDate;
 	}
 	
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setSalary(double salary) {
+		this.salary = salary;
+	}
+
+	public void setBasic_pay(double basic_pay) {
+		this.basic_pay = basic_pay;
+	}
+
 	public char getGender() {
 		return gender;
 	}
@@ -75,6 +91,8 @@ public class EmployeePayRollData {
 	public void setGender(char gender) {
 		this.gender = gender;
 	}
+
+	
 
 
 
