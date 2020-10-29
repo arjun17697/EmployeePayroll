@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -97,11 +98,24 @@ public class EmployeeServiceJDBCTest {
 		boolean isSynced = empPayrollService.isEmpPayrollSyncedWithDB("Mark");
 		assertTrue(isSynced);
 	}
-
+	
+	@Ignore
 	@Test
 	public void givenNewEmployee_WhenAddedInTwoTables_ShouldSyncWithDB() throws EmployeePayrollException, SQLException {
 		empPayrollService.readEmployeePayrollData(IOService.DB_IO);
-		empPayrollService.addEmployeeAndPayrollData("Mark", 200000.00, "2016-02-01", "M");
+		// empPayrollService.addEmployeeAndPayrollData("Mark", 200000.00, "2016-02-01",
+		// "M");
+		boolean isSynced = empPayrollService.isEmpPayrollSyncedWithDB("Mark");
+		assertTrue(isSynced);
+	}
+
+	@Test
+	public void givenNewEmployee_WhenAddedUsingER_ShouldSyncWithDB() throws EmployeePayrollException, SQLException {
+		empPayrollService.readEmployeePayrollData(IOService.DB_IO);
+		List<String> depts = new ArrayList<>();
+		depts.add("Sales");
+		depts.add("Marketing");
+		empPayrollService.addEmployeeAndPayrollData("Mark", 200000.00, "2016-02-01", "M", 501, depts);
 		boolean isSynced = empPayrollService.isEmpPayrollSyncedWithDB("Mark");
 		assertTrue(isSynced);
 	}
