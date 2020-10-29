@@ -8,6 +8,7 @@ public class EmployeePayRollData {
 	public String name;
 	public double salary;
 	public Date startDate;
+	public double basic_pay;
 	
 	public EmployeePayRollData(int id, String name, double salary) {
 		this.id = id;
@@ -15,27 +16,14 @@ public class EmployeePayRollData {
 		this.salary = salary;
 	}
 	
-	public EmployeePayRollData(int id, String name, double salary,Date date) {
+	public EmployeePayRollData(int id, String name, double basic_pay,Date date) {
 		this.id = id;
 		this.name = name;
-		this.salary = salary;
+		this.basic_pay = basic_pay;
 		this.startDate=date;
 	}
 	
 public String toString() {return "id:" + id +" name: " +name + " Salary: " +salary;}
-
-@Override
-public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result + id;
-	result = prime * result + ((name == null) ? 0 : name.hashCode());
-	long temp;
-	temp = Double.doubleToLongBits(salary);
-	result = prime * result + (int) (temp ^ (temp >>> 32));
-	result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
-	return result;
-}
 
 @Override
 public boolean equals(Object obj) {
@@ -46,6 +34,8 @@ public boolean equals(Object obj) {
 	if (getClass() != obj.getClass())
 		return false;
 	EmployeePayRollData other = (EmployeePayRollData) obj;
+	if (Double.doubleToLongBits(basic_pay) != Double.doubleToLongBits(other.basic_pay))
+		return false;
 	if (id != other.id)
 		return false;
 	if (name == null) {
@@ -62,5 +52,12 @@ public boolean equals(Object obj) {
 		return false;
 	return true;
 }
+
+public String getName() {
+	// TODO Auto-generated method stub
+	return name;
+}
+
+
 
 }

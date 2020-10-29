@@ -8,18 +8,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.bridgelabz.employee.EmployeePayRollService.IOService;
+
 public class EmployeePayRollService {
 	public enum IOService {
 		CONSOLE_IO, FILE_IO, DB_IO, REST_IO
 	}
 
 	private List<EmployeePayRollData> employeePayrollList;
+	private EmployeePayrollDBService employeePayrollDBService;
 
 	public EmployeePayRollService() {
-	};
+		employeePayrollDBService = EmployeePayrollDBService.getInstance();
+	}
 
 	public EmployeePayRollService(List<EmployeePayRollData> employeePayrollList) {
+		this();
 		this.employeePayrollList = employeePayrollList;
+
 	}
 
 	public static void main(String[] args) {
@@ -27,7 +33,7 @@ public class EmployeePayRollService {
 		EmployeePayRollService employeePayRollService = new EmployeePayRollService(employeePayrollList);
 		Scanner sc = new Scanner(System.in);
 		employeePayRollService.readData(sc);
-		//employeePayRollService.writeData();
+		// employeePayRollService.writeData();
 	}
 
 	public void readData(Scanner sc) {
@@ -48,23 +54,23 @@ public class EmployeePayRollService {
 	}
 
 	public void printData(IOService ioService) {
-		if(ioService.equals(com.bridgelabz.employee.EmployeePayRollService.IOService.FILE_IO))
+		if (ioService.equals(com.bridgelabz.employee.EmployeePayRollService.IOService.FILE_IO))
 			new com.bridgelabz.employee.EmployeePayrollFileIOService().printData();
 	}
 
 	public long countEntries(IOService ioService) {
-		if(ioService.equals(com.bridgelabz.employee.EmployeePayRollService.IOService.FILE_IO))
+		if (ioService.equals(com.bridgelabz.employee.EmployeePayRollService.IOService.FILE_IO))
 			return new com.bridgelabz.employee.EmployeePayrollFileIOService().countEntries();
 		return 0;
-		
+
 	}
-	
+
 	public static boolean readFile() {
 		Path path = Paths.get("C:/Users/HP LAP/Desktop/BridgeLabz/FileIO/EmployeePayRoll/PayRollDoc.txt");
 		try {
 			String fileContent = Files.readString(path);
-			String []employees = fileContent.split(",");
-			for(String employee:employees)
+			String[] employees = fileContent.split(",");
+			for (String employee : employees)
 				System.out.println(employee);
 			return true;
 		} catch (IOException e) {
@@ -74,8 +80,27 @@ public class EmployeePayRollService {
 	}
 
 	public List<EmployeePayRollData> readEmployeePayrollData(IOService ioService) {
-		if(ioService.equals(IOService.DB_IO))
-			this.employeePayrollList=new EmployeePayrollDBService().readData();
+		if (ioService.equals(IOService.DB_IO))
+			this.employeePayrollList = new EmployeePayrollDBService().readData();
 		return this.employeePayrollList;
+	}
+
+	public void updateEmployeeSalary(String name, double salary) {
+		int result = employeePayrollDBService.updateSalaryUsingSQL(name, salary);
+		EmployeePayRollData employeePayrollData = getEmployeePayrollData(name);
+		if (result != 0 && employeePayrollData != null)
+			employeePayrollData.basic_pay = salary;
+	}
+
+	public boolean isEmpPayrollSyncedWithDB(String name) {
+		try {
+			return employeePayrollDBService.getEmployeePayrollDatas(name).get(0).equals(getEmployeePayrollData(name));
+		} catch (IndexOutOfBoundsException e) {
+		}
+		return false;
+	}
+
+	private EmployeePayRollData getEmployeePayrollData(String name) {
+		return employeePayrollList.stream().filter(e -> e.getName().equals(name)).findFirst().orElse(null);
 	}
 }
