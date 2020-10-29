@@ -152,21 +152,25 @@ public class EmployeePayRollService {
 		else
 			throw new EmployeePayrollException("Wrong IO type", ExceptionType.WRONG_IO_TYPE);
 	}
-	
-	public void addEmployeePayrollData(String name,Double salary,String department,String startDate,String gender)
-		throws EmployeePayrollException{
-		int result=employeePayrollDBService.insertNewEmployeeToDB(name, salary, department, startDate, gender);
+
+	public void addEmployeePayrollData(String name, Double salary, String startDate, String gender)
+			throws EmployeePayrollException {
+		int result = employeePayrollDBService.insertNewEmployeeToDB(name, salary, startDate, gender);
 		readEmployeePayrollData(IOService.DB_IO);
-		EmployeePayRollData employeePayrollData=getEmployeePayrollData(name);
-		if(result!=0 && employeePayrollData!=null) {
+		EmployeePayRollData employeePayrollData = getEmployeePayrollData(name);
+		if (result != 0 && employeePayrollData != null) {
 			employeePayrollData.setName(name);
 			employeePayrollData.setStartDate(LocalDate.parse(startDate));
 			employeePayrollData.setBasic_pay(salary);
 		}
-		if (result==0)
-			throw new EmployeePayrollException("Wrong name given",ExceptionType.WRONG_NAME);
-		if(employeePayrollData==null)
-			throw new EmployeePayrollException("No data found",ExceptionType.NO_DATA_FOUND);
+		if (result == 0)
+			throw new EmployeePayrollException("Wrong name given", ExceptionType.WRONG_NAME);
+		if (employeePayrollData == null)
+			throw new EmployeePayrollException("No data found", ExceptionType.NO_DATA_FOUND);
 	}
 
+	public void addEmployeeAndPayrollData(String name, Double salary, String startDate, String gender)
+			throws EmployeePayrollException, SQLException {
+		employeePayrollList.add(employeePayrollDBService.addNewEmployeeToDB(name, salary, startDate, gender));
+	}
 }
