@@ -103,7 +103,9 @@ public class EmployeePayRollService {
 
 	public boolean isEmpPayrollSyncedWithDB(String name) {
 		try {
-			return employeePayrollDBService.getEmployeePayrollDatas(name).get(0).equals(getEmployeePayrollData(name));
+			EmployeePayRollData emp =getEmployeePayrollData(name);
+			return employeePayrollDBService.getEmployeePayrollDatas(name).get(0).getId()==emp.getId()
+					&& employeePayrollDBService.getEmployeePayrollDatas(name).get(0).getName().equals(emp.getName());
 		} catch (IndexOutOfBoundsException e) {
 		}
 		return false;
@@ -153,6 +155,7 @@ public class EmployeePayRollService {
 			throw new EmployeePayrollException("Wrong IO type", ExceptionType.WRONG_IO_TYPE);
 	}
 
+	@Deprecated
 	public void addEmployeePayrollData(String name, Double salary, String startDate, String gender)
 			throws EmployeePayrollException {
 		int result = employeePayrollDBService.insertNewEmployeeToDB(name, salary, startDate, gender);

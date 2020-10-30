@@ -61,11 +61,6 @@ public class EmployeePayRollData {
 			return false;
 		if (company_id != other.company_id)
 			return false;
-		if (departmentName == null) {
-			if (other.departmentName != null)
-				return false;
-		} else if (!departmentName.equals(other.departmentName))
-			return false;
 		if (gender != other.gender)
 			return false;
 		if (id != other.id)
