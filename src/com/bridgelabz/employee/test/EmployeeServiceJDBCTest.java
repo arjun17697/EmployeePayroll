@@ -108,7 +108,8 @@ public class EmployeeServiceJDBCTest {
 		boolean isSynced = empPayrollService.isEmpPayrollSyncedWithDB("Mark");
 		assertTrue(isSynced);
 	}
-
+	
+	@Ignore
 	@Test
 	public void givenNewEmployee_WhenAddedUsingER_ShouldSyncWithDB() throws EmployeePayrollException, SQLException {
 		empPayrollService.readEmployeePayrollData(IOService.DB_IO);
@@ -118,5 +119,12 @@ public class EmployeeServiceJDBCTest {
 		empPayrollService.addEmployeeAndPayrollData("Mark", 200000.00, "2016-02-01", "M", 501, depts);
 		boolean isSynced = empPayrollService.isEmpPayrollSyncedWithDB("Mark");
 		assertTrue(isSynced);
+	}
+	
+	@Test
+	public void givenEmployeeId_WhenDeletedUsing_ShouldSyncWithDB() throws EmployeePayrollException, SQLException{
+		empPayrollService.removeEmployee(5);
+		assertEquals(5,empPayrollList.size());
+		
 	}
 }
