@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -155,7 +156,7 @@ public class EmployeePayRollService {
 			throw new EmployeePayrollException("Wrong IO type", ExceptionType.WRONG_IO_TYPE);
 	}
 
-	@Deprecated
+	
 	public void addEmployeePayrollData(String name, Double salary, String startDate, String gender)
 			throws EmployeePayrollException {
 		int result = employeePayrollDBService.insertNewEmployeeToDB(name, salary, startDate, gender);
@@ -184,4 +185,35 @@ public class EmployeePayRollService {
 			e.printStackTrace();
 		}
 	}
+	
+	public void addEmployeeAndPayrollData(EmployeePayRollData[] employeePayrollDataArray)
+			throws EmployeePayrollException {
+		for (EmployeePayRollData emp : employeePayrollDataArray) {
+			System.out.println(emp.getName() + " is being added to DB");
+			addEmployeePayrollData(emp.getName(), emp.getSalary(), emp.getStartDate().toString(), emp.getGender());
+			System.out.println("Employee added: " + emp.getName());
+		}
+	}
+	
+	public void addEmployeePayrollDataWithThreads(EmployeePayRollData[] employeePayrollDataArray)
+			throws EmployeePayrollException {
+		Map<Integer, Boolean> status = new HashMap<>();
+
+		for (EmployeePayRollData emp : employeePayrollDataArray) {
+			Runnable task = () -> {
+				System.out.println(emp.getName() + " is being added to DB");
+				try {
+					addEmployeePayrollData(emp.getName(), emp.getSalary(), emp.getStartDate().toString(),
+							emp.getGender());
+				} catch (EmployeePayrollException e) {
+					e.printStackTrace();
+				}
+				status.put(emp.hashCode(), true);
+				System.out.println("Employee added: " + emp.getName());
+			};
+			Thread thread = new Thread(task, emp.getName());
+			thread.start();
+		}
+	}
+
 }

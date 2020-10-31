@@ -10,7 +10,7 @@ public class EmployeePayRollData {
 	public double salary;
 	public LocalDate startDate;
 	public double basic_pay;
-	public char gender;
+	public String gender;
 	private int company_id;
 	private List<String> departmentName;
 
@@ -19,7 +19,13 @@ public class EmployeePayRollData {
 		this.name = name;
 		this.salary = salary;
 	}
-
+	
+	public EmployeePayRollData(int id, String name, double salary, Date startDate, String gender, int company_id) {
+		this(company_id, name, salary, startDate);
+		this.gender = gender;
+		this.company_id = company_id;
+	}
+	
 	public EmployeePayRollData(int id, String name, double basic_pay, Date date) {
 		this.id = id;
 		this.name = name;
@@ -27,7 +33,7 @@ public class EmployeePayRollData {
 		this.startDate = date.toLocalDate();
 	}
 
-	public EmployeePayRollData(int id, String name, double basic_pay, Date date, char gender, int company_id,
+	public EmployeePayRollData(int id, String name, double basic_pay, Date date, String gender, int company_id,
 			List<String> departmentName) {
 		this.id = id;
 		this.name = name;
@@ -132,11 +138,11 @@ public class EmployeePayRollData {
 		this.basic_pay = basic_pay;
 	}
 
-	public char getGender() {
+	public String getGender() {
 		return gender;
 	}
 
-	public void setGender(char gender) {
+	public void setGender(String gender) {
 		this.gender = gender;
 	}
 

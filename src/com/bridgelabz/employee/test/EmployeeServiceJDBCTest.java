@@ -3,7 +3,10 @@ package com.bridgelabz.employee.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,10 +124,44 @@ public class EmployeeServiceJDBCTest {
 		assertTrue(isSynced);
 	}
 	
+	@Ignore
 	@Test
 	public void givenEmployeeId_WhenDeletedUsing_ShouldSyncWithDB() throws EmployeePayrollException, SQLException{
 		empPayrollService.removeEmployee(5);
 		assertEquals(5,empPayrollList.size());
 		
+	}
+	
+	@Ignore
+	@Test
+	public void given4Employees_WhenAdded_ShouldMatchEmpEntries() throws EmployeePayrollException {
+		EmployeePayRollData[] employeePayrollDataArray = {
+				new EmployeePayRollData(0, "Kalyan", 1000000, Date.valueOf(LocalDate.now()), "M", 501),
+				new EmployeePayRollData(0, "Rashmi", 1000000, Date.valueOf(LocalDate.now()), "F", 501),
+				new EmployeePayRollData(0, "Sharad", 2000000, Date.valueOf(LocalDate.now()), "M", 501),
+				new EmployeePayRollData(0, "Nancy", 1500000, Date.valueOf(LocalDate.now()), "F", 501) };
+
+		empPayrollService.readEmployeePayrollData(IOService.DB_IO);
+		Instant start = Instant.now();
+		empPayrollService.addEmployeeAndPayrollData(employeePayrollDataArray);
+		Instant end = Instant.now();
+		System.out.println("Duration without Thread: " + Duration.between(start, end).toMillis() + " ms");
+		assertEquals(9, empPayrollService.readEmployeePayrollData(IOService.DB_IO).size());
+	}
+	
+	@Test
+	public void given4Employees_WhenAddedUsingThreads_ShouldMatchEmpEntries() throws EmployeePayrollException {
+		EmployeePayRollData[] employeePayrollDataArray = {
+				new EmployeePayRollData(0, "Kalyan", 1000000, Date.valueOf(LocalDate.now()), "M", 501),
+				new EmployeePayRollData(0, "Rashmi", 1000000, Date.valueOf(LocalDate.now()), "F", 501),
+				new EmployeePayRollData(0, "Sharad", 2000000, Date.valueOf(LocalDate.now()), "M", 501),
+				new EmployeePayRollData(0, "Nancy", 1500000, Date.valueOf(LocalDate.now()), "F", 501) };
+
+		empPayrollService.readEmployeePayrollData(IOService.DB_IO);
+		Instant start = Instant.now();
+		empPayrollService.addEmployeePayrollDataWithThreads(employeePayrollDataArray);
+		Instant end = Instant.now();
+		System.err.println("Duration with Thread: " + Duration.between(start, end).toMillis() + " ms");
+		assertEquals(13, empPayrollService.readEmployeePayrollData(IOService.DB_IO).size());
 	}
 }

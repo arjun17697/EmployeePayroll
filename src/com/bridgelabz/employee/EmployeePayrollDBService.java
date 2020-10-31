@@ -215,8 +215,8 @@ public class EmployeePayrollDBService {
 						empId, salary, deductions, taxablePay, tax, netPay);
 				int rowAffected = statement.executeUpdate(sql);
 				if (rowAffected == 1) {
-					employeePayrollData = new EmployeePayRollData(empId, name, salary, Date.valueOf(startDate),
-							gender.charAt(0), company_id, department);
+					employeePayrollData = new EmployeePayRollData(empId, name, salary, Date.valueOf(startDate), gender,
+							company_id, department);
 				}
 			} catch (SQLException e2) {
 				e2.printStackTrace();
@@ -242,14 +242,14 @@ public class EmployeePayrollDBService {
 		}
 		return employeePayrollData;
 	}
-	
-	public void removeEmployeeFromDB(int empId) throws EmployeePayrollException, SQLException{
-		String sql=String.format("UPDATE employee_payroll SET active = false WHERE id= '%s'",empId);
-		try(Connection connection=getConnection()){
+
+	public void removeEmployeeFromDB(int empId) throws EmployeePayrollException, SQLException {
+		String sql = String.format("UPDATE employee_payroll SET active = false WHERE id= '%s'", empId);
+		try (Connection connection = getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.executeUpdate();
-		}catch (SQLException e) {
-			throw new EmployeePayrollException("Wrong SQL or field given",ExceptionType.WRONG_SQL);
+		} catch (SQLException e) {
+			throw new EmployeePayrollException("Wrong SQL or field given", ExceptionType.WRONG_SQL);
 		}
 	}
 }
