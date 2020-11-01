@@ -101,7 +101,7 @@ public class EmployeeServiceJDBCTest {
 		boolean isSynced = empPayrollService.isEmpPayrollSyncedWithDB("Mark");
 		assertTrue(isSynced);
 	}
-	
+
 	@Ignore
 	@Test
 	public void givenNewEmployee_WhenAddedInTwoTables_ShouldSyncWithDB() throws EmployeePayrollException, SQLException {
@@ -111,7 +111,7 @@ public class EmployeeServiceJDBCTest {
 		boolean isSynced = empPayrollService.isEmpPayrollSyncedWithDB("Mark");
 		assertTrue(isSynced);
 	}
-	
+
 	@Ignore
 	@Test
 	public void givenNewEmployee_WhenAddedUsingER_ShouldSyncWithDB() throws EmployeePayrollException, SQLException {
@@ -123,44 +123,37 @@ public class EmployeeServiceJDBCTest {
 		boolean isSynced = empPayrollService.isEmpPayrollSyncedWithDB("Mark");
 		assertTrue(isSynced);
 	}
-	
+
 	@Ignore
 	@Test
-	public void givenEmployeeId_WhenDeletedUsing_ShouldSyncWithDB() throws EmployeePayrollException, SQLException{
+	public void givenEmployeeId_WhenDeletedUsing_ShouldSyncWithDB() throws EmployeePayrollException, SQLException {
 		empPayrollService.removeEmployee(5);
-		assertEquals(5,empPayrollList.size());
-		
+		assertEquals(5, empPayrollList.size());
+
 	}
-	
-	@Ignore
+
+
 	@Test
 	public void given4Employees_WhenAdded_ShouldMatchEmpEntries() throws EmployeePayrollException {
-		EmployeePayRollData[] employeePayrollDataArray = {
-				new EmployeePayRollData(0, "Kalyan", 1000000, Date.valueOf(LocalDate.now()), "M", 501),
-				new EmployeePayRollData(0, "Rashmi", 1000000, Date.valueOf(LocalDate.now()), "F", 501),
-				new EmployeePayRollData(0, "Sharad", 2000000, Date.valueOf(LocalDate.now()), "M", 501),
-				new EmployeePayRollData(0, "Nancy", 1500000, Date.valueOf(LocalDate.now()), "F", 501) };
+		List<EmployeePayRollData> employeePayrollDataList = new ArrayList<>() {
+			{
+				add(new EmployeePayRollData(0, "Kalyan", 1000000, Date.valueOf(LocalDate.now()), "M", 501));
+				add(new EmployeePayRollData(0, "Rashmi", 1000000, Date.valueOf(LocalDate.now()), "F", 501));
+				add(new EmployeePayRollData(0, "Sharad", 2000000, Date.valueOf(LocalDate.now()), "M", 501));
+				add(new EmployeePayRollData(0, "Nancy", 1500000, Date.valueOf(LocalDate.now()), "F", 501));
+			}
+		};
 
 		empPayrollService.readEmployeePayrollData(IOService.DB_IO);
 		Instant start = Instant.now();
-		empPayrollService.addEmployeeAndPayrollData(employeePayrollDataArray);
+		empPayrollService.addEmployeePayrollDataWithThreads(employeePayrollDataList);
 		Instant end = Instant.now();
 		System.out.println("Duration without Thread: " + Duration.between(start, end).toMillis() + " ms");
-		assertEquals(9, empPayrollService.readEmployeePayrollData(IOService.DB_IO).size());
-	}
-	
-	@Test
-	public void given4Employees_WhenAddedUsingThreads_ShouldMatchEmpEntries() throws EmployeePayrollException {
-		EmployeePayRollData[] employeePayrollDataArray = {
-				new EmployeePayRollData(0, "Kalyan", 1000000, Date.valueOf(LocalDate.now()), "M", 501),
-				new EmployeePayRollData(0, "Rashmi", 1000000, Date.valueOf(LocalDate.now()), "F", 501),
-				new EmployeePayRollData(0, "Sharad", 2000000, Date.valueOf(LocalDate.now()), "M", 501),
-				new EmployeePayRollData(0, "Nancy", 1500000, Date.valueOf(LocalDate.now()), "F", 501) };
-
-		empPayrollService.readEmployeePayrollData(IOService.DB_IO);
-		Instant start = Instant.now();
-		empPayrollService.addEmployeePayrollDataWithThreads(employeePayrollDataArray);
-		Instant end = Instant.now();
+		start = Instant.now();
+		empPayrollService.addEmployeePayrollDataWithThreads(employeePayrollDataList);
+		end = Instant.now();
+		empPayrollService.addEmployeePayrollDataWithThreads(employeePayrollDataList);
+		end = Instant.now();
 		System.err.println("Duration with Thread: " + Duration.between(start, end).toMillis() + " ms");
 		assertEquals(13, empPayrollService.readEmployeePayrollData(IOService.DB_IO).size());
 	}

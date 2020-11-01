@@ -104,8 +104,8 @@ public class EmployeePayRollService {
 
 	public boolean isEmpPayrollSyncedWithDB(String name) {
 		try {
-			EmployeePayRollData emp =getEmployeePayrollData(name);
-			return employeePayrollDBService.getEmployeePayrollDatas(name).get(0).getId()==emp.getId()
+			EmployeePayRollData emp = getEmployeePayrollData(name);
+			return employeePayrollDBService.getEmployeePayrollDatas(name).get(0).getId() == emp.getId()
 					&& employeePayrollDBService.getEmployeePayrollDatas(name).get(0).getName().equals(emp.getName());
 		} catch (IndexOutOfBoundsException e) {
 		}
@@ -156,8 +156,7 @@ public class EmployeePayRollService {
 			throw new EmployeePayrollException("Wrong IO type", ExceptionType.WRONG_IO_TYPE);
 	}
 
-	
-	public void addEmployeePayrollData(String name, Double salary, String startDate, String gender)
+	public synchronized void addEmployeePayrollData(String name, Double salary, String startDate, String gender)
 			throws EmployeePayrollException {
 		int result = employeePayrollDBService.insertNewEmployeeToDB(name, salary, startDate, gender);
 		readEmployeePayrollData(IOService.DB_IO);
@@ -173,19 +172,25 @@ public class EmployeePayRollService {
 			throw new EmployeePayrollException("No data found", ExceptionType.NO_DATA_FOUND);
 	}
 
-	public void addEmployeeAndPayrollData(String name, Double salary, String startDate, String gender,int company_id,List<String>department)
-			throws EmployeePayrollException, SQLException {
-		employeePayrollList.add(employeePayrollDBService.addNewEmployeeToDB(name, salary, startDate, gender,company_id,department));
+	public void addEmployeePayrollData(List<EmployeePayRollData> employeePayrollDataList)
+			throws EmployeePayrollException {
+		employeePayrollDataList.forEach(emp -> {
+			try {
+				addEmployeePayrollData(emp.getName(), emp.getSalary(), emp.getStartDate().toString(), emp.getGender());
+			} catch (EmployeePayrollException e) {
+				e.printStackTrace();
+			}
+		});
 	}
-	
-	public void removeEmployee(int empId) throws SQLException,EmployeePayrollException {
+
+	public void removeEmployee(int empId) throws SQLException, EmployeePayrollException {
 		try {
 			employeePayrollDBService.removeEmployeeFromDB(empId);
-		}catch (EmployeePayrollException e) {
+		} catch (EmployeePayrollException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void addEmployeeAndPayrollData(EmployeePayRollData[] employeePayrollDataArray)
 			throws EmployeePayrollException {
 		for (EmployeePayRollData emp : employeePayrollDataArray) {
@@ -194,26 +199,36 @@ public class EmployeePayRollService {
 			System.out.println("Employee added: " + emp.getName());
 		}
 	}
-	
-	public void addEmployeePayrollDataWithThreads(EmployeePayRollData[] employeePayrollDataArray)
+
+	public void addEmployeePayrollDataWithThreads(List<EmployeePayRollData> employeePayrollDataList)
 			throws EmployeePayrollException {
 		Map<Integer, Boolean> status = new HashMap<>();
 
-		for (EmployeePayRollData emp : employeePayrollDataArray) {
-			Runnable task = () -> {
-				System.out.println(emp.getName() + " is being added to DB");
-				try {
-					addEmployeePayrollData(emp.getName(), emp.getSalary(), emp.getStartDate().toString(),
-							emp.getGender());
-				} catch (EmployeePayrollException e) {
-					e.printStackTrace();
-				}
-				status.put(emp.hashCode(), true);
-				System.out.println("Employee added: " + emp.getName());
-			};
-			Thread thread = new Thread(task, emp.getName());
-			thread.start();
-		}
-	}
+		employeePayrollDataList.forEach(emp -> {
+			status.put(emp.hashCode(), false);
+			{
+				Runnable task = () -> {
+					System.out.println(Thread.currentThread().getName() + " is being added to DB");
+					try {
+						addEmployeePayrollData(emp.getName(), emp.getSalary(), emp.getStartDate().toString(),
+								emp.getGender());
+						System.out.println("Employee added: " + Thread.currentThread().getName());
+						status.put(emp.hashCode(), true);
+					} catch (EmployeePayrollException e) {
+						e.printStackTrace();
+					}
+					System.out.println("Employee added: " + emp.getName());
+				};
+				Thread thread = new Thread(task, emp.getName());
+				thread.start();
+			}
+		});
 
+		while (status.containsValue(false))
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+	}
 }

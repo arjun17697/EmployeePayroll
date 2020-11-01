@@ -19,6 +19,7 @@ import com.bridgelabz.employee.EmployeePayrollException.ExceptionType;
 public class EmployeePayrollDBService {
 	private PreparedStatement empPreparedStatement;
 	private static EmployeePayrollDBService employeePayrollDBService;
+	private int connectionCounter;
 
 	public static EmployeePayrollDBService getInstance() {
 		if (employeePayrollDBService == null)
@@ -26,14 +27,17 @@ public class EmployeePayrollDBService {
 		return employeePayrollDBService;
 	}
 
-	private Connection getConnection() throws SQLException {
+	private synchronized Connection getConnection() throws SQLException {
 		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
 		String userName = "root";
 		String password = "arjun321";
 		Connection connection;
-		System.out.println("Connecting to database:" + jdbcURL);
+		connectionCounter++;
+		System.out
+				.println("Proccessing Thraed: " + Thread.currentThread().getName() + " with ID: " + connectionCounter);
 		connection = DriverManager.getConnection(jdbcURL, userName, password);
-		System.out.println("Connection is successful!" + connection);
+		System.out.println("Proccessing Thraed: " + Thread.currentThread().getName() + " with ID: " + connectionCounter
+				+ " is successful!");
 		return connection;
 
 	}
@@ -149,10 +153,15 @@ public class EmployeePayrollDBService {
 				"INSERT INTO employee_payroll(name,basic_pay,start_date,gender) VALUES ('%s','%s','%s','%s');", name,
 				salary, startDate, gender);
 		try (Connection connection = getConnection()) {
-			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			return preparedStatement.executeUpdate();
+			empPreparedStatement = connection.prepareStatement(sql);
+			return empPreparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new EmployeePayrollException("Wrong SQL or field given", ExceptionType.WRONG_SQL);
+		} finally {
+			try {
+				empPreparedStatement.close();
+			} catch (SQLException e) {
+			}
 		}
 	}
 
