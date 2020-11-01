@@ -116,7 +116,7 @@ public class EmployeeServiceJDBCTest {
 	@Test
 	public void givenNewEmployee_WhenAddedUsingER_ShouldSyncWithDB() throws EmployeePayrollException, SQLException {
 		empPayrollService.readEmployeePayrollData(IOService.DB_IO);
-		List<String> depts = new ArrayList<>();
+		ArrayList<String> depts = new ArrayList<>();
 		depts.add("Sales");
 		depts.add("Marketing");
 		empPayrollService.addEmployeeAndPayrollData("Mark", 200000.00, "2016-02-01", "M", 501, depts);
@@ -135,12 +135,14 @@ public class EmployeeServiceJDBCTest {
 
 	@Test
 	public void given4Employees_WhenAdded_ShouldMatchEmpEntries() throws EmployeePayrollException {
+		ArrayList<String> depts = new ArrayList<>();
+		depts.add("Human Resources");
 		List<EmployeePayRollData> employeePayrollDataList = new ArrayList<>() {
 			{
-				add(new EmployeePayRollData(0, "Kalyan", 1000000, Date.valueOf(LocalDate.now()), "M", 501));
-				add(new EmployeePayRollData(0, "Rashmi", 1000000, Date.valueOf(LocalDate.now()), "F", 501));
-				add(new EmployeePayRollData(0, "Sharad", 2000000, Date.valueOf(LocalDate.now()), "M", 501));
-				add(new EmployeePayRollData(0, "Nancy", 1500000, Date.valueOf(LocalDate.now()), "F", 501));
+				add(new EmployeePayRollData(0, "Kalyan", 1000000, Date.valueOf(LocalDate.now()), "M", 501,depts));
+				add(new EmployeePayRollData(0, "Rashmi", 1000000, Date.valueOf(LocalDate.now()), "F", 501,depts));
+				add(new EmployeePayRollData(0, "Sharad", 2000000, Date.valueOf(LocalDate.now()), "M", 501,depts));
+				add(new EmployeePayRollData(0, "Nancy", 1500000, Date.valueOf(LocalDate.now()), "F", 501,depts));
 			}
 		};
 

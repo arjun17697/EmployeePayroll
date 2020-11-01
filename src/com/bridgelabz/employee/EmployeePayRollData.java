@@ -2,6 +2,7 @@ package com.bridgelabz.employee;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeePayRollData {
@@ -12,7 +13,7 @@ public class EmployeePayRollData {
 	public double basic_pay;
 	public String gender;
 	private int company_id;
-	private List<String> departmentName;
+	private ArrayList<String> departmentName;
 
 	public EmployeePayRollData(int id, String name, double salary) {
 		this.id = id;
@@ -35,7 +36,7 @@ public class EmployeePayRollData {
 	}
 
 	public EmployeePayRollData(int id, String name, double basic_pay, Date date, String gender, int company_id,
-			List<String> departmentName) {
+			ArrayList<String> departmentName) {
 		this.id = id;
 		this.name = name;
 		this.basic_pay = basic_pay;
@@ -122,11 +123,11 @@ public class EmployeePayRollData {
 		this.company_id = company_id;
 	}
 
-	public List<String> getDepartmentName() {
+	public ArrayList<String> getDepartmentName() {
 		return departmentName;
 	}
 
-	public void setDepartmentName(List<String> departmentName) {
+	public void setDepartmentName(ArrayList<String> departmentName) {
 		this.departmentName = departmentName;
 	}
 

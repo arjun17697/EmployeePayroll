@@ -191,13 +191,10 @@ public class EmployeePayRollService {
 		}
 	}
 
-	public void addEmployeeAndPayrollData(EmployeePayRollData[] employeePayrollDataArray)
-			throws EmployeePayrollException {
-		for (EmployeePayRollData emp : employeePayrollDataArray) {
-			System.out.println(emp.getName() + " is being added to DB");
-			addEmployeePayrollData(emp.getName(), emp.getSalary(), emp.getStartDate().toString(), emp.getGender());
-			System.out.println("Employee added: " + emp.getName());
-		}
+	public void addEmployeeAndPayrollData(String name, Double salary, String startDate, String gender, int companyId,
+			ArrayList<String> department) throws EmployeePayrollException, SQLException {
+		employeePayrollList.add(
+				employeePayrollDBService.addNewEmployeeToDB(name, salary, startDate, gender, companyId, department));
 	}
 
 	public void addEmployeePayrollDataWithThreads(List<EmployeePayRollData> employeePayrollDataList)
@@ -210,11 +207,13 @@ public class EmployeePayRollService {
 				Runnable task = () -> {
 					System.out.println(Thread.currentThread().getName() + " is being added to DB");
 					try {
-						addEmployeePayrollData(emp.getName(), emp.getSalary(), emp.getStartDate().toString(),
-								emp.getGender());
+						addEmployeeAndPayrollData(emp.getName(), emp.getSalary(), emp.getStartDate().toString(),
+								emp.getGender(), emp.getcompany_id(), emp.getDepartmentName());
 						System.out.println("Employee added: " + Thread.currentThread().getName());
 						status.put(emp.hashCode(), true);
 					} catch (EmployeePayrollException e) {
+						e.printStackTrace();
+					} catch (SQLException e) {
 						e.printStackTrace();
 					}
 					System.out.println("Employee added: " + emp.getName());

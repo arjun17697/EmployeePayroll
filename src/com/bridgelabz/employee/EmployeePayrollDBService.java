@@ -166,7 +166,7 @@ public class EmployeePayrollDBService {
 	}
 
 	public EmployeePayRollData addNewEmployeeToDB(String name, Double salary, String startDate, String gender,
-			int company_id, List<String> department) throws EmployeePayrollException, SQLException {
+			int company_id, ArrayList<String> department) throws EmployeePayrollException, SQLException {
 		EmployeePayRollData employeePayrollData = null;
 		int empId = -1;
 		Connection connection = null;
