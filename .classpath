@@ -8,5 +8,9 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="C:/Users/HP LAP/Desktop/eclipse-java-2020-09-R-win32-x86_64 (1)/mysql-connector-java-8.0.22.jar"/>
+	<classpathentry kind="lib" path="C:/Users/HP LAP/Desktop/eclipse-java-2020-09-R-win32-x86_64 (1)/rest-assured-4.1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/HP LAP/Desktop/eclipse-java-2020-09-R-win32-x86_64 (1)/gson-2.8.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/HP LAP/Desktop/eclipse-java-2020-09-R-win32-x86_64 (1)/groovy-all-2.4.15.jar"/>
+	<classpathentry kind="lib" path="C:/Users/HP LAP/Desktop/eclipse-java-2020-09-R-win32-x86_64 (1)/httpclient-4.3.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

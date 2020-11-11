@@ -29,7 +29,7 @@ public class EmployeePayRollService {
 
 	public EmployeePayRollService(List<EmployeePayRollData> employeePayrollList) {
 		this();
-		this.employeePayrollList = employeePayrollList;
+		this.employeePayrollList = new ArrayList<>(employeePayrollList);
 
 	}
 
